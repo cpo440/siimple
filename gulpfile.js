@@ -1,8 +1,9 @@
 //Import dependencies
+var autoprefixer = require('gulp-autoprefixer');
 var fs = require('fs');
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-var minify = require('gulp-minify-css');
+var cleanCSS = require('gulp-clean-css');
 var rename = require('gulp-rename');
 var header = require('gulp-header');
 var sass = require('gulp-sass');
@@ -28,6 +29,12 @@ gulp.task('build', function(){
   //Build
   .pipe(sass().on('error', sass.logError))
 
+  //Autoprefix
+  .pipe(autoprefixer({
+      browsers: ['last 3 versions', 'IE 9'],
+      cascade: false
+  }))
+
   //Add the header
   .pipe(header(banner, { pkg : pkg } ))
 
@@ -42,8 +49,11 @@ gulp.task('minimize', function(){
   //Set the source file
   gulp.src('dist/siimple.css')
 
-  //MinifCss
-  .pipe(minify())
+  //CleanCss
+  .pipe(cleanCSS({
+    compatibility: '*',
+    processImportFrom: ['!fonts.googleapis.com']
+  }))
 
   //Save as siimple.min.css
   .pipe(rename('siimple.min.css'))
